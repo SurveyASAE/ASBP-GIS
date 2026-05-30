@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASBP Web GIS</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"
+  />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-title">
+      <span class="app-title-main">ASBP Web GIS</span>
+      <span class="app-title-sub">
+        โครงการก่อสร้างทางรถไฟ สายบ้านไผ่-มหาสารคาม-ร้อยเอ็ด-มุกดาหาร-นครพนม สัญญาที่ 1 ช่วงบ้านไผ่-หนองพอก
+      </span>
+    </div>
+    <div class="app-tools">
+      <span class="app-badge">Internal Use</span>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <div id="map"></div>
+
+    <!-- PANEL ควบคุมเลเยอร์ทั้งหมด -->
+    <div class="logo-panel">
+    <img src="icon/logo.png" alt="ASBP Logo">
+    </div>
+
+<div class="layer-panel">
+
+      <!-- กล่องค้นหา Sta. -->
+      <div class="sta-search-panel">
+
+        <input type="text" id="staSearchInput" placeholder="ค้นหา Sta.">
+
+        <button id="staSearchBtn">
+            <i class="fas fa-search"></i>
+        </button>
+
+        <div id="staSuggestBox"></div>
+
+      </div>
+
+      <!-- กล่องเลือกแผนที่ -->
+      <div class="custom-layer-control collapsed" id="basemapControl">
+        <div class="clc-header" data-title="Google Map">
+          <img src="icon/map.png" alt="แผนที่">
+        </div>
+        <div class="clc-body">
+          <label><input type="radio" name="basemap" value="hybrid" checked> Google Hybrid</label>
+          <label><input type="radio" name="basemap" value="satellite"> Google Satellite</label>
+          <label><input type="radio" name="basemap" value="map"> Google Map</label>
+        </div>
+      </div>
+
+      <!-- กล่องข้อมูล Alignment -->
+      <div class="custom-layer-control collapsed" id="overlayControl">
+        <div class="clc-header" data-title="Alignment">
+          <img src="icon/project.png" alt="ข้อมูลโครงการ">
+        </div>
+        <div class="clc-body">
+
+          <!-- หัวข้อหลักแนวทางรถไฟ -->
+          <label><input type="checkbox" value="route" data-group="route" checked>Railway Alignment</label>
+            <div class="sub-layer">
+              <label><input type="checkbox" value="cltrack" data-parent="route" checked> Center Line</label>
+              <label><input type="checkbox" value="updowntrack" data-parent="route" checked> Up & Down Track</label>
+              <label><input type="checkbox" value="siding" data-parent="route" checked> Siding Track </label>
+              <label><input type="checkbox" value="area" data-parent="route" checked> R.O.W.</label>
+            </div>
+
+          <!-- หัวข้อหลัก Sta. -->
+          <label><input type="checkbox" value="sta" data-group="sta" checked>Sta. Railway</label>
+            <div class="sub-layer">
+              <label><input type="checkbox" value="chainagelabel" data-parent="sta" checked> Sta. Railway</label>
+
+            </div>    
+        </div>
+      </div>
+
+      <!-- กล่องข้อมูลงานก่อสร้าง -->
+      <div class="custom-layer-control collapsed" id="civilControl">
+        <div class="clc-header" data-title="Civil Works">
+          <img src="icon/civil.png" alt="ข้อมูลโครงการ">
+        </div>
+        <div class="clc-body">
+
+          <!-- หัวข้อหลักงานโครงสร้าง -->
+          <label><input type="checkbox" value="stwork" data-group="stwork" >Structure Works</label>
+            <div class="sub-layer">
+              <label><input type="checkbox" value="boxunderpass" data-parent="stwork" > Box Underpass</label>
+              <label><input type="checkbox" value="overpass" data-parent="stwork" > Overpass</label>
+              <label><input type="checkbox" value="railwaybridge" data-parent="stwork" > Railway Bridge</label>
+            </div>
+
+          <!-- หัวข้อหลักงานCivil -->
+          <label><input type="checkbox" value="civilwork" data-group="civilwork" >Civil Works</label>
+            <div class="sub-layer">
+              <label><input type="checkbox" value="shouldersbl" data-parent="civilwork" > Sub ballast</label>
+              <label><input type="checkbox" value="roadworks" data-parent="civilwork" > Access&Service Road</label>
+            </div>
+        </div>
+      </div>
+
+      <!-- กล่องข้อมูล Progress --> 
+      <div class="custom-layer-control collapsed" id="progressControl">
+        <div class="clc-header" data-title="Progress">
+          <img src="icon/progress.png" alt="ข้อมูลโครงการ">
+        </div>
+        <div class="clc-body">
+
+          <!-- หัวข้อหลัก Progress -->
+          <label><input type="checkbox" value="progress" data-group="progress"  checked>Progress</label>
+            <div class="sub-layer">
+              <label><input type="checkbox" value="subballast" data-parent="progress"  checked> Sub ballast</label>
+              <label><input type="checkbox" value="fence" data-parent="progress"  checked> Fence</label>
+            </div>
+        </div>
+      </div>
+
+      <!-- กล่องข้อมูล งานสำรวจ' --> 
+      <div class="custom-layer-control collapsed" id="surveyControl">
+        <div class="clc-header" data-title="Survey">
+          <img src="icon/survey.png" alt="ข้อมูลโครงการ">
+        </div>
+        <div class="clc-body">
+
+          <!-- หัวข้อหลัก งานสำรวจ -->
+          <label><input type="checkbox" value="survey" data-group="survey"  checked>งานสำรวจ</label>
+            <div class="sub-layer">
+              <label><input type="checkbox" value="bm" data-parent="survey"  checked> หมุดควบคุม</label>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- แผงแสดง Lat/Lng/Zoom -->
+    <div class="map-info-panel" id="mapInfo">
+      <div class="map-info-title">ข้อมูลแผนที่</div>
+      <div class="map-info-content">
+        <div><strong>Lat</strong>: <span id="latInfo">–</span></div>
+        <div><strong>Lng</strong>: <span id="lngInfo">–</span></div>
+        <div><strong>Zoom</strong>: <span id="zoomInfo">–</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <span>ASBP Web GIS • พัฒนาสำหรับงานติดตามผลงานโครงการ</span>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
