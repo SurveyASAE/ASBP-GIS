@@ -374,6 +374,7 @@ fetch('./data/boxunderpass.geojson')
     .then(res => res.json())
     .then(data => {
         boxunderpassLayer.addData(data);
+        boxunderpassLayer.addTo(map);
     })
     .catch(err => {
         console.log('ยังไม่มี boxunderpass.geojson');
@@ -393,6 +394,7 @@ fetch('./data/overpass.geojson')
     .then(res => res.json())
     .then(data => {
         overpassLayer.addData(data);
+        overpassLayer.addTo(map);
     })
     .catch(err => {
         console.log('ยังไม่มี overpass.geojson');
@@ -412,6 +414,7 @@ fetch('./data/railwaybridge.geojson')
     .then(res => res.json())
     .then(data => {
         railwaybridgeLayer.addData(data);
+        railwaybridgeLayer.addTo(map);
     })
     .catch(err => {
         console.log('ยังไม่มี railwaybridge.geojson');
@@ -431,9 +434,30 @@ fetch('./data/vdbridge.geojson')
     .then(res => res.json())
     .then(data => {
         vdbridgeLayer.addData(data);
+        vdbridgeLayer.addTo(map);
     })
     .catch(err => {
         console.log('ยังไม่มี vdbridge.geojson');
+    });
+// =====================================================================================================================
+/* ---------- Station ---------- */
+// =====================================================================================================================
+const stationLayer = L.geoJSON(null, {
+    style: {
+        color: '#616aee',      // ส้ม
+        weight: 1,
+        opacity: 0.9
+    }
+});
+
+fetch('./data/station.geojson')
+    .then(res => res.json())
+    .then(data => {
+        stationLayer.addData(data);
+        stationLayer.addTo(map);
+    })
+    .catch(err => {
+        console.log('ยังไม่มี station.geojson');
     });
 // =====================================================================================================================
 /* ---------- Shoulders Sub ballast ---------- */
@@ -489,6 +513,7 @@ fetch('./data/shouldersbl.geojson')
     .then(res => res.json())
     .then(data => {
         shouldersblLayer.addData(data);
+        shouldersblLayer.addTo(map);
     })
     .catch(err => {
         console.log('ยังไม่มี shouldersbl.geojson');
@@ -508,6 +533,7 @@ fetch('./data/roadworks.geojson')
     .then(res => res.json())
     .then(data => {
         roadworksLayer.addData(data);
+        roadworksLayer.addTo(map);
     })
     .catch(err => {
         console.log('ยังไม่มี roadworks.geojson');
@@ -608,7 +634,8 @@ fetch('./data/fence.geojson')
             'Fence',
             {
                 sticky: true,
-                direction: 'top',
+                direction: 'bottom',
+                offset: [0, 8],
                 className: 'work-tooltip'
             }
         );
@@ -985,6 +1012,11 @@ function searchSta() {
 
         foundLayer.openTooltip();
 
+            setTimeout(() => {
+                updateStaLabels();
+                foundLayer.openTooltip();
+            }, 50);
+
         // ลบวงเดิม
         if (staSearchMarker) {
             map.removeLayer(staSearchMarker);
@@ -1019,12 +1051,13 @@ document.getElementById('staSearchInput').addEventListener('keydown', function(e
 map.on('click', function () {
 
     if (staSearchMarker) {
-
         map.removeLayer(staSearchMarker);
-
         staSearchMarker = null;
-
     }
+
+    setTimeout(function () {
+        updateStaLabels();
+    }, 100);
 
 });
 
@@ -1091,3 +1124,43 @@ document.addEventListener('click', function(e){
     }
 
 });
+// ให้ Sta. กลับมาแสดงหลังคลิกพื้นที่อื่นบนแผนที่
+map.on('click', function () {
+    setTimeout(function () {
+        updateStaLabels();
+    }, 100);
+});
+// =====================================================================================================================
+// SHOW FENCE LABEL BY ZOOM
+// =====================================================================================================================
+
+function updateFenceLabels() {
+
+    const zoom = map.getZoom();
+
+    fenceLayer.eachLayer(groupLayer => {
+
+        if (groupLayer.eachLayer) {
+
+            groupLayer.eachLayer(layer => {
+
+                if (layer.getTooltip && layer.getTooltip()) {
+
+                    if (zoom >= 16) {
+                        layer.openTooltip();
+                    } else {
+                        layer.closeTooltip();
+                    }
+
+                }
+
+            });
+
+        }
+
+    });
+
+}
+
+map.on('zoomend', updateFenceLabels);
+updateFenceLabels();
