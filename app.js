@@ -417,6 +417,25 @@ fetch('./data/railwaybridge.geojson')
         console.log('ยังไม่มี railwaybridge.geojson');
     });
 // =====================================================================================================================
+/* ---------- Viaducy Railway bridge ---------- */
+// =====================================================================================================================
+const vdbridgeLayer = L.geoJSON(null, {
+    style: {
+        color: '#6709a5',      // ส้ม
+        weight: 1,
+        opacity: 0.9
+    }
+});
+
+fetch('./data/vdbridge.geojson')
+    .then(res => res.json())
+    .then(data => {
+        vdbridgeLayer.addData(data);
+    })
+    .catch(err => {
+        console.log('ยังไม่มี vdbridge.geojson');
+    });
+// =====================================================================================================================
 /* ---------- Shoulders Sub ballast ---------- */
 // =====================================================================================================================
 const shouldersblLayer = L.geoJSON(null, {
@@ -733,6 +752,10 @@ overlayCheckboxes.forEach(cb => {
         if (cb.value === 'railwaybridge') {
             if (cb.checked) railwaybridgeLayer.addTo(map);
             else map.removeLayer(railwaybridgeLayer);
+        }
+        if (cb.value === 'vdbridge') {
+            if (cb.checked) vdbridgeLayer.addTo(map);
+            else map.removeLayer(vdbridgeLayer);
         }
         
         if (cb.value === 'roadworks') {
