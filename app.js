@@ -557,7 +557,8 @@ const subballastLayer = L.geoJSON(null, {
             'F/N Sub ballast',
             {
                 sticky: true,
-                direction: 'top',
+                direction: 'bottom',
+                offset: [0, 10],
                 className: 'work-tooltip'
             }
         );
@@ -1131,30 +1132,38 @@ map.on('click', function () {
     }, 100);
 });
 // =====================================================================================================================
-// SHOW FENCE LABEL BY ZOOM
+// SHOW FENCE&SUBBALLAST LABEL BY ZOOM
 // =====================================================================================================================
 
-function updateFenceLabels() {
+function updateWorkLabels() {
 
     const zoom = map.getZoom();
 
-    fenceLayer.eachLayer(groupLayer => {
+    // Fence
+    fenceLayer.eachLayer(layer => {
 
-        if (groupLayer.eachLayer) {
+        if (layer.getTooltip && layer.getTooltip()) {
 
-            groupLayer.eachLayer(layer => {
+            if (zoom >= 16) {
+                layer.openTooltip();
+            } else {
+                layer.closeTooltip();
+            }
 
-                if (layer.getTooltip && layer.getTooltip()) {
+        }
 
-                    if (zoom >= 16) {
-                        layer.openTooltip();
-                    } else {
-                        layer.closeTooltip();
-                    }
+    });
 
-                }
+    // Sub ballast
+    subballastLayer.eachLayer(layer => {
 
-            });
+        if (layer.getTooltip && layer.getTooltip()) {
+
+            if (zoom >= 16) {
+                layer.openTooltip();
+            } else {
+                layer.closeTooltip();
+            }
 
         }
 
@@ -1162,5 +1171,6 @@ function updateFenceLabels() {
 
 }
 
-map.on('zoomend', updateFenceLabels);
-updateFenceLabels();
+map.on('zoomend', updateWorkLabels);
+
+updateWorkLabels();
