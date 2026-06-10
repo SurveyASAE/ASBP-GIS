@@ -444,7 +444,7 @@ fetch('./data/vdbridge.geojson')
 // =====================================================================================================================
 const stationLayer = L.geoJSON(null, {
     style: {
-        color: '#616aee',      // ส้ม
+        color: '#07fff3',      // ส้ม
         weight: 1,
         opacity: 0.9
     }
@@ -784,6 +784,10 @@ overlayCheckboxes.forEach(cb => {
         if (cb.value === 'vdbridge') {
             if (cb.checked) vdbridgeLayer.addTo(map);
             else map.removeLayer(vdbridgeLayer);
+        }
+        if (cb.value === 'station') {
+            if (cb.checked) stationLayer.addTo(map);
+            else map.removeLayer(stationLayer);
         }
         
         if (cb.value === 'roadworks') {
