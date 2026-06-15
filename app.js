@@ -360,6 +360,45 @@ fetch('./data/chainagelabel.geojson')
 
     })
 // =====================================================================================================================
+// Sta. Structure LAYER
+// =====================================================================================================================
+
+const stastmarkLayer = L.geoJSON(null, {
+
+    pointToLayer: (feature, latlng) => {
+        return L.circleMarker(latlng, {
+            radius: 2,
+            color: '#38bdf8',
+            weight: 1,
+            fillColor: '#0f172a',
+            fillOpacity: 1
+});
+    },
+
+    onEachFeature: (feature, layer) => {
+        layer.bindTooltip(
+            feature.properties.TEXTSTRING,
+            {
+                permanent: false,
+                direction: 'bottom',
+                offset: [0, 0],
+                className: 'stastmark-label'
+            }
+        );
+    }
+
+});
+fetch('./data/stastmark.geojson')
+    .then(res => res.json())
+    .then(data => {
+        stastmarkLayer.addData(data);
+        stastmarkLayer.addTo(map);
+        updateStastmarkLabels();
+    })
+    .catch(err => {
+        console.log('ยังไม่มี stastmark.geojson');
+    });
+// =====================================================================================================================
 /* ---------- boxunderpass ---------- */
 // =====================================================================================================================
 const boxunderpassLayer = L.geoJSON(null, {
@@ -378,6 +417,26 @@ fetch('./data/boxunderpass.geojson')
     })
     .catch(err => {
         console.log('ยังไม่มี boxunderpass.geojson');
+    });
+// =====================================================================================================================
+/* ---------- boxculvert ---------- */
+// =====================================================================================================================
+const boxculvertLayer = L.geoJSON(null, {
+    style: {
+        color: '#3b219c',      // ฟ้า
+        weight: 1,
+        opacity: 0.9
+    }
+});
+
+fetch('./data/boxculvert.geojson')
+    .then(res => res.json())
+    .then(data => {
+        boxculvertLayer.addData(data);
+        boxculvertLayer.addTo(map);
+    })
+    .catch(err => {
+        console.log('ยังไม่มี boxculvert.geojson');
     });
 // =====================================================================================================================
 /* ---------- overpass ---------- */
@@ -454,7 +513,6 @@ fetch('./data/station.geojson')
     .then(res => res.json())
     .then(data => {
         stationLayer.addData(data);
-        stationLayer.addTo(map);
     })
     .catch(err => {
         console.log('ยังไม่มี station.geojson');
@@ -766,10 +824,18 @@ overlayCheckboxes.forEach(cb => {
             if (cb.checked) chainagelabelLayer.addTo(map);
             else map.removeLayer(chainagelabelLayer);
         }
+        if (cb.value === 'stastmark') {
+            if (cb.checked) stastmarkLayer.addTo(map);
+            else map.removeLayer(stastmarkLayer);
+        }
 
         if (cb.value === 'boxunderpass') {
             if (cb.checked) boxunderpassLayer.addTo(map);
             else map.removeLayer(boxunderpassLayer);
+        }
+        if (cb.value === 'boxculvert') {
+            if (cb.checked) boxculvertLayer.addTo(map);
+            else map.removeLayer(boxculvertLayer);
         }
 
         if (cb.value === 'overpass') {
@@ -918,7 +984,41 @@ function updateStaLabels() {
 
 map.on('zoomend', updateStaLabels);
 updateStaLabels();
+// =====================================================================================================================
+// SHOW STA STRUCTURE BY ZOOM
+// =====================================================================================================================
+function updateStastmarkLabels() {
 
+    const zoom = map.getZoom();
+
+    stastmarkLayer.eachLayer(layer => {
+
+        const staText = layer.feature.properties.TEXTSTRING;
+        const staNumber = getStaNumber(staText);
+
+        layer.closeTooltip();
+
+        if (zoom < 8) {
+            if (staNumber % 10000 === 0) layer.openTooltip();
+        }
+        else if (zoom <= 10) {
+            if (staNumber % 5000 === 0) layer.openTooltip();
+        }
+        else if (zoom <= 12) {
+            if (staNumber % 1000 === 0) layer.openTooltip();
+        }
+        else if (zoom <= 16) {
+            if (staNumber % 500 === 0) layer.openTooltip();
+        }
+        else {
+            layer.openTooltip();
+        }
+
+    });
+}
+
+map.on('zoomend', updateStastmarkLabels);
+updateStastmarkLabels();
 // =====================================================================================================================
 // SCALE
 // =====================================================================================================================
@@ -1144,15 +1244,23 @@ function updateWorkLabels() {
     const zoom = map.getZoom();
 
     // Fence
-    fenceLayer.eachLayer(layer => {
+    fenceLayer.eachLayer(groupLayer => {
 
-        if (layer.getTooltip && layer.getTooltip()) {
+        if (groupLayer.eachLayer) {
 
-            if (zoom >= 16) {
-                layer.openTooltip();
-            } else {
-                layer.closeTooltip();
-            }
+            groupLayer.eachLayer(layer => {
+
+                if (layer.getTooltip && layer.getTooltip()) {
+
+                    if (zoom >= 16) {
+                        layer.openTooltip();
+                    } else {
+                        layer.closeTooltip();
+                    }
+
+                }
+
+            });
 
         }
 
