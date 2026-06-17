@@ -571,7 +571,7 @@ fetch('./data/shouldersbl.geojson')
     .then(res => res.json())
     .then(data => {
         shouldersblLayer.addData(data);
-        shouldersblLayer.addTo(map);
+
     })
     .catch(err => {
         console.log('ยังไม่มี shouldersbl.geojson');
@@ -597,16 +597,35 @@ fetch('./data/roadworks.geojson')
         console.log('ยังไม่มี roadworks.geojson');
     });
 // =====================================================================================================================
+/* ---------- Land ---------- */
+// =====================================================================================================================
+const parcelLayer = L.geoJSON(null, {
+    style: {
+        color: '#e9eb7f',      // แดง
+        weight: 1,
+        opacity: 0.5
+    }
+});
+
+fetch('./data/parcel.geojson')
+    .then(res => res.json())
+    .then(data => {
+       parcelLayer.addData(data);
+    })
+    .catch(err => {
+        console.log('ยังไม่มี parcel.geojson');
+    });
+// =====================================================================================================================
 /* ---------- progress ---------- */
 // =====================================================================================================================
 /* ---------- Sub ballast ---------- */
 const subballastLayer = L.geoJSON(null, {
     style: {
-        color: '#00ff95',      // สีเส้นขอบ
-        weight: 0.3,
+        color: '#a200ff',      // สีเส้นขอบ
+        weight: .8,
         opacity: 1,
-        fillColor: '#00ff95',  // สีพื้นที่
-        fillOpacity: 0.3
+        fillColor: '#a200ff',  // สีพื้นที่
+        fillOpacity: 0.75
     },
 
     onEachFeature: function (feature, layer) {
@@ -794,7 +813,7 @@ basemapRadios.forEach(r => {
 
 // 1) ดึง checkbox ทั้งหมดใน overlayControl
 const overlayCheckboxes = document.querySelectorAll(
-    '#overlayControl input[type="checkbox"], #civilControl input[type="checkbox"], #progressControl input[type="checkbox"], #surveyControl input[type="checkbox"]'
+    '#overlayControl input[type="checkbox"], #civilControl input[type="checkbox"], #progressControl input[type="checkbox"], #surveyControl input[type="checkbox"], #landControl input[type="checkbox"]'
 );
 
 
@@ -859,6 +878,10 @@ overlayCheckboxes.forEach(cb => {
         if (cb.value === 'roadworks') {
             if (cb.checked) roadworksLayer.addTo(map);
             else map.removeLayer(roadworksLayer);
+        }
+        if (cb.value === 'parcel') {
+            if (cb.checked) parcelLayer.addTo(map);
+            else map.removeLayer(parcelLayer);
         }
 
         if (cb.value === 'shouldersbl') {

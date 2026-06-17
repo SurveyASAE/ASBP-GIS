@@ -124,7 +124,7 @@
           <!-- หัวข้อหลัก Progress -->
           <label><input type="checkbox" value="progress" data-group="progress"  checked>Progress</label>
             <div class="sub-layer">
-              <label><input type="checkbox" value="subballast" data-parent="progress"  checked> Sub ballast</label>
+              <label><input type="checkbox" value="subballast" data-parent="progress"  > Sub ballast</label>
               <label><input type="checkbox" value="fence" data-parent="progress"  checked> Fence</label>
             </div>
         </div>
@@ -140,10 +140,32 @@
           <!-- หัวข้อหลัก งานสำรวจ -->
           <label><input type="checkbox" value="survey" data-group="survey"  checked>งานสำรวจ</label>
             <div class="sub-layer">
-              <label><input type="checkbox" value="bm" data-parent="survey"  checked> หมุดควบคุม (ยังไม่มีข้อมูล)</label>
+          <label><input type="checkbox" value="bm" data-parent="survey"  checked> หมุดควบคุม (ยังไม่มีข้อมูล)</label>
             </div>
         </div>
       </div>
+
+      <!-- กล่องข้อมูล งานที่ดิน -->
+<div class="custom-layer-control collapsed" id="landControl">
+    <div class="clc-header" data-title="Land Acquisition">
+        <img src="icon/land.png" alt="งานที่ดิน">
+    </div>
+
+    <div class="clc-body">
+
+        <label>
+            <input type="checkbox" value="land" data-group="land" checked>
+            งานที่ดิน
+        </label>
+
+        <div class="sub-layer">
+
+            <label><input type="checkbox" value="parcel" data-parent="land" > แปลงที่ดิน</label>
+
+        </div>
+
+    </div>
+</div>
     </div>
 
     <!-- แผงแสดง Lat/Lng/Zoom -->
