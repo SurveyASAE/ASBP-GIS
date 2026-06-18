@@ -155,7 +155,7 @@ fetch('./data/updowntrack.geojson')
     .then(res => res.json())
     .then(data => {
         updowntrackLayer.addData(data);
-        updowntrackLayer.addTo(map);
+
         map.fitBounds(updowntrackLayer.getBounds(), { padding: [40, 40] });
     })
     .catch(err => {
