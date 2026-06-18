@@ -631,14 +631,14 @@ const subballastLayer = L.geoJSON(null, {
     onEachFeature: function (feature, layer) {
 
         layer.bindTooltip(
-            'F/N Sub ballast',
-            {
-                sticky: true,
-                direction: 'bottom',
-                offset: [0, 10],
-                className: 'work-tooltip'
-            }
-        );
+        'F/N Sub ballast',
+        {
+            sticky: true,
+            direction: 'bottom',
+            offset: [0, 2],
+            className: 'work-tooltip'
+        }
+    );
 
         layer.on({
             mouseover: function (e) {
@@ -1289,23 +1289,46 @@ function updateWorkLabels() {
 
     });
 
-    // Sub ballast
-    subballastLayer.eachLayer(layer => {
-
-        if (layer.getTooltip && layer.getTooltip()) {
-
-            if (zoom >= 16) {
-                layer.openTooltip();
-            } else {
-                layer.closeTooltip();
-            }
-
-        }
-
-    });
-
 }
 
 map.on('zoomend', updateWorkLabels);
 
 updateWorkLabels();
+// ====================================================================================
+// LEGEND
+// ====================================================================================
+
+const legend = L.control({ position: 'bottomleft' });
+
+legend.onAdd = function () {
+
+    const div = L.DomUtil.create('div', 'map-legend');
+
+    div.innerHTML = `
+        <div class="legend-title">Legend</div>
+
+        <div class="legend-item">
+            <span class="legend-color" style="background:#a200ff;"></span>
+            F/N Sub ballast
+        </div>
+
+        <div class="legend-item">
+            <span class="legend-fence"></span>
+            Fence
+        </div>
+
+        <div class="legend-item">
+            <span class="legend-color" style="background:#00ff00;"></span>
+            Center Line
+        </div>
+
+        <div class="legend-item">
+            <span class="legend-color" style="background:#1100ff;"></span>
+            R.O.W.
+        </div>
+    `;
+
+    return div;
+};
+
+legend.addTo(map);
